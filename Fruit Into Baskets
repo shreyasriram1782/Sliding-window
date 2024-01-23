@@ -1,0 +1,26 @@
+def totalFruit(tree):
+    fruit_count = {}  # To store the count of each type of fruit
+    max_fruits = 0
+    left = 0
+
+    for right in range(len(tree)):
+        # Add the current fruit to the basket
+        fruit_count[tree[right]] = fruit_count.get(tree[right], 0) + 1
+
+        # Check if there are more than two types of fruit in the basket
+        while len(fruit_count) > 2:
+            # Remove the leftmost fruit from the basket
+            fruit_count[tree[left]] -= 1
+            if fruit_count[tree[left]] == 0:
+                del fruit_count[tree[left]]
+            left += 1
+
+        # Update the maximum number of fruits
+        max_fruits = max(max_fruits, right - left + 1)
+
+    return max_fruits
+
+# Example usage:
+tree = [1, 2, 1, 2, 3]
+result = totalFruit(tree)
+print(result)
