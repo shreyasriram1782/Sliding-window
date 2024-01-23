@@ -1,3 +1,56 @@
+//Algorithm:
+
+Binary Search:
+
+Perform a binary search on the possible lengths of common subarrays. 
+The search space is from 0 to the minimum of the lengths of arrays A and B.
+In each iteration, call the check function to determine whether 
+there exists a common subarray of at least the mid-length.
+check Function (Rolling Hash):
+
+Initialize variables, including a set (seen) to store hash 
+values of subarrays in array A.
+Calculate rolling hash values for subarrays of the given length in array A.
+Use rolling hash to update hash values as the window moves,
+efficiently considering the leftmost and rightmost characters.
+Calculate rolling hash values for subarrays of the given length in array B.
+Check if the hash value of the current subarray in B exists in the seen set.
+Return True if a match is found, indicating the presence of a common subarray.
+Return False if no match is found for the entire length of arrays.
+
+Binary Search Iterations:
+
+Adjust the search space based on the result of the check function:
+If check returns True, update the lower bound of the search space.
+If check returns False, update the upper bound of the search space.
+Continue the binary search until the search space is narrowed down to a single length.
+Result:
+
+After the binary search, return the length of the longest common subarray.
+Time Complexity:
+
+The time complexity of the entire algorithm is O((m + n) * log(min(m, n))), 
+where m and n are the lengths of arrays A and B.
+The binary search has a logarithmic time complexity, and the check function 
+involves iterating through the arrays once to compute rolling hash values.
+Space Complexity:
+
+The space complexity is O(m + n), where m and n are the lengths of arrays A and B.
+The additional space is primarily used for the seen set to store hash 
+values of subarrays in array A.
+Summary:
+
+The algorithm efficiently explores possible lengths of common subarrays using binary search.
+The rolling hash calculations within the check function allow for quick 
+updates to hash values, facilitating efficient comparisons.
+The space complexity is reasonable, considering the use of the seen set.
+In summary, the algorithm provides an efficient solution to find the 
+maximum length of a repeated subarray between two arrays.
+
+
+
+//binary search explanation
+
 Consider the following arrays:
 
 python
@@ -26,3 +79,153 @@ The search space is narrowed down to a single length.
 Result:
 
 The binary search concludes, and the algorithm returns the length of the longest common subarray, which is 3.
+
+
+
+
+//rolling hash explanation
+Let's go through a complete example of the check function 
+for finding a common subarray of length 3 in the arrays A and B:
+
+python
+Copy code
+A = [1, 2, 3, 2, 1]
+B = [3, 2, 1, 4, 7]
+Initialization:
+
+length = 3
+seen: Set to store hash values of subarrays in array A.
+hash_A: Rolling hash value for array A.
+hash_B: Rolling hash value for array B.
+base = 113 (chosen prime number for rolling hash).
+mod = 10**9 + 7 (chosen prime number for modulo operation).
+Step 1: Calculate Hash Values for Array A (Initial Window):
+
+Subarray: [1, 2, 3]
+Calculate hash value for the initial subarray in A:
+lua
+Copy code
+hash_A = (0 * base + 1) % mod
+       = 1 % mod
+       = 1
+Add this hash value to the seen set.
+Step 2: Update Hash Values for Array A (Slide the Window):
+
+Slide the window to the right and update hash values using 
+rolling hash for subsequent subarrays:
+[2, 3, 2]
+scss
+Copy code
+hash_A = (1 * base - 1 * base^2 + 2) % mod
+       = (1 * 113 - 1 * 113^2 + 2) % (10^9 + 7)
+       = (1 * 113 - 1 * 12817 + 2) % (10^9 + 7)
+       = 130 % (10^9 + 7)
+       = 130
+[3, 2, 1]
+scss
+Copy code
+hash_A = (130 * base - 2 * base^2 + 3) % mod
+       = (130 * 113 - 2 * 113^2 + 3) % (10^9 + 7)
+       = (130 * 113 - 2 * 12817 + 3) % (10^9 + 7)
+       = 8426 % (10^9 + 7)
+       = 8426
+[2, 1, ...] (and so on)
+Step 3: Calculate Hash Values for Array B (Initial Window):
+
+Subarray: [3, 2, 1]
+lua
+Copy code
+hash_B = (0 * base + 3) % mod
+       = 3 % mod
+       = 3
+Step 4: Check for Common Hash Values (Slide the Window in B):
+
+Slide the window to the right and update hash values for subsequent subarrays in B:
+
+[2, 1, 4]
+scss
+Copy code
+hash_B = (3 * base - 3 * base^2 + 4) % mod
+       = (3 * 113 - 3 * 113^2 + 4) % (10^9 + 7)
+       = (3 * 113 - 3 * 12817 + 4) % (10^9 + 7)
+       = 5538 % (10^9 + 7)
+       = 5538
+[1, 4, 7]
+scss
+Copy code
+hash_B = (5538 * base - 2 * base^2 + 7) % mod
+       = (5538 * 113 - 2 * 113^2 + 7) % (10^9 + 7)
+       = (5538 * 113 - 2 * 12817 + 7) % (10^9 + 7)
+       = 4855 % (10^9 + 7)
+       = 4855
+The check function checks if the hash value of the current 
+subarray in B exists in the seen set.
+
+In this example, the hash value 4855 matches the hash value 
+in the seen set (from array A).
+
+The function returns True, indicating the presence of a
+common subarray of length 3.
+
+This example demonstrates how the check function efficiently 
+computes and compares rolling hash values for subarrays of a specified length in arrays A and B.
+
+
+//code 
+def findLength(A, B):
+    def check(length):
+        seen = set()  # Set to store hash values of subarrays in array A
+        hash_A = 0     # Rolling hash value for array A
+        base = 113     # A prime number for rolling hash
+        mod = 10**9 + 7
+
+        # Calculate hash values for subarrays of length 'length' in array A
+        for i in range(length):
+            hash_A = (hash_A * base + A[i]) % mod
+
+        seen.add(hash_A)
+
+        # Precompute base^length to optimize rolling hash updates
+        baseL = pow(base, length, mod)
+
+        # Update hash values using rolling hash for array A
+        for i in range(length, len(A)):
+            hash_A = (hash_A * base - A[i - length] * baseL + A[i]) % mod
+            seen.add(hash_A)
+
+        hash_B = 0
+
+        # Calculate hash values for subarrays of length 'length' in array B
+        for i in range(length):
+            hash_B = (hash_B * base + B[i]) % mod
+
+        # Check if any hash value matches in the set
+        if hash_B in seen:
+            return True
+
+        # Update hash values using rolling hash for array B
+        for i in range(length, len(B)):
+            hash_B = (hash_B * base - B[i - length] * baseL + B[i]) % mod
+            if hash_B in seen:
+                return True
+
+        return False
+
+    # Binary search on the possible lengths of the common subarray
+    low, high = 0, min(len(A), len(B))
+
+    while low < high:
+        mid = (low + high + 1) // 2
+        if check(mid):
+            low = mid
+        else:
+            high = mid - 1
+
+    return low
+
+# Example usage:
+A = [1, 2, 3, 2, 1]
+B = [3, 2, 1, 4, 7]
+result = findLength(A, B)
+print(result)
+
