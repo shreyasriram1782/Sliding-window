@@ -1,0 +1,28 @@
+Consider the following arrays:
+
+python
+Copy code
+A = [1, 2, 3, 2, 1]
+B = [3, 2, 1, 4, 7]
+Initial Setup:
+
+The binary search starts with the search space from 0 to the minimum of the lengths of arrays A and B, which is 0 to 5.
+The mid-point of the search space is calculated (let's say mid = 2).
+First Iteration:
+
+The check function is called with the mid-length, which is 2.
+Rolling hash is used to calculate hash values for subarrays of length 2 in both arrays A and B.
+If there exists a common subarray of length at least 2, the search space's lower bound is updated; otherwise, the upper bound is updated.
+Second Iteration:
+
+The search space is now from 3 to 5 (midpoint mid = 4).
+The check function is called again, and rolling hash is used to calculate hash values for subarrays of length 4 in both arrays A and B.
+The search space is narrowed further based on the result.
+Third Iteration:
+
+The search space is now from 3 to 3 (midpoint mid = 3).
+The check function is called once more, and rolling hash is used to calculate hash values for subarrays of length 3.
+The search space is narrowed down to a single length.
+Result:
+
+The binary search concludes, and the algorithm returns the length of the longest common subarray, which is 3.
