@@ -1,0 +1,49 @@
+from collections import Counter
+
+def minWindow(s, t):
+    if not s or not t:
+        return ""
+
+    # Counter to store the frequency of characters in target string t
+    target_counts = Counter(t)
+    required_chars = len(target_counts)
+
+    # Pointers for the sliding window
+    left, right = 0, 0
+    formed_chars = 0
+    window_counts = Counter()
+
+    # Variables to keep track of the minimum window
+    min_len = float('inf')
+    min_window = ""
+
+    while right < len(s):
+        # Expand the window to the right
+        window_counts[s[right]] += 1
+        if window_counts[s[right]] == target_counts[s[right]]:
+            formed_chars += 1
+
+        # Contract the window from the left
+        while formed_chars == required_chars:
+            # Update the minimum window if the current window is smaller
+            if right - left + 1 < min_len:
+                min_len = right - left + 1
+                min_window = s[left:right+1]
+
+            # Move the left pointer to contract the window
+            window_counts[s[left]] -= 1
+            if window_counts[s[left]] < target_counts[s[left]]:
+                formed_chars -= 1
+
+            left += 1
+
+        # Move the right pointer to expand the window
+        right += 1
+
+    return min_window
+
+# Example usage:
+s = "ADOBECODEBANC"
+t = "ABC"
+result = minWindow(s, t)
+print(result)
