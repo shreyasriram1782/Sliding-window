@@ -1,0 +1,34 @@
+The core idea is to use a sliding window to keep track of a subarray 
+that meets the conditions of at most K 0s to be flipped. 
+When the window encounters more than K 0s, the left pointer is moved 
+to shrink the window, ensuring that the conditions are satisfied. 
+The max_length is continuously updated as the window moves through the array.
+
+
+def longestOnes(A, K):
+    left = 0
+    max_length = 0
+    zero_count = 0
+
+    for right in range(len(A)):
+        # Increment zero_count if the current element is 0
+        if A[right] == 0:
+            zero_count += 1
+
+        # Shrink the window if zero_count exceeds K
+        while zero_count > K:
+            # Decrement zero_count and move the left pointer
+            if A[left] == 0:
+                zero_count -= 1
+            left += 1
+
+        # Update the maximum length of consecutive 1s
+        max_length = max(max_length, right - left + 1)
+
+    return max_length
+
+# Example usage:
+A = [1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1]
+K = 2
+result = longestOnes(A, K)
+print(result)
