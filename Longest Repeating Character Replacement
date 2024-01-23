@@ -1,0 +1,46 @@
+This solution maintains a sliding window represented by the left and right pointers. 
+It uses a dictionary char_count to keep track of the count of characters 
+in the current window. The max_count variable is updated to store the
+maximum count of any character in the window. 
+If the difference between the window size and the max_count exceeds k, 
+it means we need to replace more than k characters, 
+so the left pointer is moved to shrink the window.
+def characterReplacement(s, k):
+    if not s:
+        return 0
+
+    max_length = 0
+    max_count = 0
+
+    # Dictionary to store the count of characters in the current window
+    char_count = {}
+
+    # Pointers for the sliding window
+    left = 0
+
+    for right in range(len(s)):
+        # Update the count of the current character in the window
+        char_count[s[right]] = char_count.get(s[right], 0) + 1
+
+        # Update the maximum count of any character in the window
+        max_count = max(max_count, char_count[s[right]])
+
+        # Calculate the length of the window
+        window_size = right - left + 1
+
+        # Check if we need to replace more than k characters
+        if window_size - max_count > k:
+            # Move the left pointer to shrink the window
+            char_count[s[left]] -= 1
+            left += 1
+
+        # Update the maximum length of the window
+        max_length = max(max_length, window_size)
+
+    return max_length
+
+# Example usage:
+s = "ABAB"
+k = 2
+result = characterReplacement(s, k)
+print(result)
